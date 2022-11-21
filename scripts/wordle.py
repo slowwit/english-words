@@ -1,21 +1,29 @@
+"""
+Aide in searching for a wordle
+
+"""
 import json
 
 def rtn_words(pat, fw='salet', wrds=None, rules=None):
+    """
+    with a search word and a pattern of pass fail fnd suggest another set of words
+    If you provide a set of rules or words then they will be applied from there 
+    """
     if not wrds:
-        with open('words_dictionary.json', 'r') as fh:
+        with open('words_dictionary.json', 'r', encoding='UTF8') as fh:
             words = json.load(fh)
             words = {k for k in words.keys() if len(k) == 5}
     else:
         words = wrds
-    
+
     if not rules:
         rules = set()
-    
+
     # pat: is the first word pattern of on an offs 0,1,2
     # 2 = exact place
     # 1 = in word wrong place
     # 0 = not in word
-        
+
     # Develop a set of letters that should be present and onse that should not be
     # Pre develop a list of possibles just by letter regaurdless of position      
     kw = list(fw)
@@ -49,25 +57,30 @@ def rtn_words(pat, fw='salet', wrds=None, rules=None):
             if t == 2 and w[p] == l:
                 add += 1
             elif t == 1 and w[p] != l:
-                add += 1 
+                add += 1
         if add == len(rules):
             passed_words.append(w)
 
     return passed_words, rules
 
+def report(wrds, rules):
+    print(f'Number of words found {len(wrds)}, Rules applied {len(rules)}')
+    print(wrds[0:10])
+
+
 
 if __name__ == '__main__':
 
     w,l = rtn_words(fw='salet', pat=[0,1,0,1,0])
-    print(w)
+    report(w,l)
     w,l = rtn_words(fw='renal', pat=[1,1,0,1,0], wrds=w,rules=l)
-    print(w)
+    report(w,l)
     w,l = rtn_words(fw='cream', pat=[0,2,1,1,0], wrds=w,rules=l)
-    print(w)
+    report(w,l)
     w,l = rtn_words(fw='argue', pat=[1,2,0,0,2], wrds=w,rules=l)
-    print(w)
+    report(w,l)
     w,l = rtn_words(fw='brake', pat=[2,2,2,0,2], wrds=w,rules=l)
-    print(w)
+    report(w,l)
     
     
 
